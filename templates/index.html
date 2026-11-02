@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Maker UI</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; padding: 50px; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; color: white; }
+        #btn-create { background-color: #28a745; }
+        #btn-stop { background-color: #dc3545; }
+        #btn-delete { background-color: #ffc107; color: black; }
+        button:hover { opacity: 0.8; }
+        #status-box { margin-top: 20px; font-size: 18px; font-weight: bold; }
+        .running { color: green; }
+        .stopped { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ Cloud Maker</h1>
+        <p>Управление виртуальной машиной</p>
+        <div style="margin-bottom: 20px;">
+            <label>RAM (MB): <input type="number" id="ram" value="2048" step="1024"></label>
+            <label>CPU: <input type="number" id="cpu" value="1" max="1"></label>
+        </div>
+        <div>
+            <button id="btn-create" onclick="callApi('/create')">Создать ВМ</button>
+            <button id="btn-stop" onclick="callApi('/stop')">Остановить</button>
+            <button id="btn-delete" onclick="callApi('/delete')">Удалить</button>
+        </div>
+        <div id="status-box">Статус: <span id="status-text">проверка...</span></div>
+    </div>
+
+    <script>
+        async function callApi(endpoint) {
+            let url = endpoint;
+            if (endpoint === '/create') {
+                const ram = document.getElementById('ram').value;
+                const cpu = document.getElementById('cpu').value;
+                url += `?ram=${ram}&cpu=${cpu}`;
+            }
+            document.getElementById('status-text').innerText = 'выполняется...';
+            
+            try {
+                const response = await fetch(url, { method: 'POST' });
+                const data = await response.json();
+                
+                // Если API вернул ошибку (например, превышена квота)
+                if (!response.ok) {
+                    alert("Ошибка: " + data.message);
+                }
+                
+                // Обновляем статус через 2 секунды
+                setTimeout(checkStatus, 2000); 
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('status-text').innerText = 'ошибка соединения';
+            }
+        }
+
+        async function checkStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                const statusText = document.getElementById('status-text');
+                if (data.status === 'running') {
+                    statusText.innerText = 'ЗАПУЩЕНА (Running)';
+                    statusText.className = 'running';
+                } else {
+                    statusText.innerText = 'ОСТАНОВЛЕНА (Stopped)';
+                    statusText.className = 'stopped';
+                }
+            } catch (error) {
+                document.getElementById('status-text').innerText = 'API недоступно';
+            }
+        }
+
+        checkStatus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+#cloud-config
+hostname: cloud-maker-vm
+users:
+  - name: student
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDK735Od1dVZ0Yzj1YWqaTV0+6fAsXjLWnVzY3vfED89 zybato@debian-course
+ssh_pwauth: false
