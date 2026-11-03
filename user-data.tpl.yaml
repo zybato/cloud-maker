@@ -5,5 +5,5 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDK735Od1dVZ0Yzj1YWqaTV0+6fAsXjLWnVzY3vfED89 zybato@debian-course
+      - SSH_KEY
 ssh_pwauth: false

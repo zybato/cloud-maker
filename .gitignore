@@ -3,3 +3,8 @@
 seed.img
 venv/
 __pycache__/
+*.part
+vm_key
+vm_key.pub
+user-data.yaml
+meta-data.yaml
